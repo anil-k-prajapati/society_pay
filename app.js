@@ -115,8 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     
-    // Set initial state: direct pay default on mobile, QR default on desktop
-    switchTab(isMobile ? 'pay' : 'qr');
+    // Set initial state: direct pay default on all devices
+    switchTab('pay');
 
     // Tab Listeners
     tabPay.addEventListener('click', () => switchTab('pay'));
