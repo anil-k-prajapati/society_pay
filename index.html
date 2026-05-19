@@ -55,13 +55,23 @@
                     <div class="value" id="amount-display">₹0</div>
                 </div>
 
-                <a href="#" id="pay-btn" class="btn btn-pay disabled" style="width: 100%;">Pay Now</a>
-                
-                <button id="toggle-qr-btn" type="button" class="btn btn-secondary" style="height: 48px; margin-bottom: 1.25rem; border-style: dashed; width: 100%;">📷 Show QR Code</button>
+                <!-- Tabs Navigation -->
+                <div class="tabs-list">
+                    <button id="tab-pay" type="button" class="tab-trigger active">⚡ Pay Direct</button>
+                    <button id="tab-qr" type="button" class="tab-trigger">📷 Scan QR</button>
+                </div>
 
-                <div id="qrcode-container" style="width: 100%; display: none; margin-bottom: 1.25rem;">
-                    <div id="qrcode"></div>
-                    <div class="qr-instruction">Scan with any UPI app</div>
+                <!-- Tab Content: Pay Direct -->
+                <div id="tab-content-pay" style="width: 100%;">
+                    <a href="#" id="pay-btn" class="btn btn-pay disabled" style="width: 100%;">Pay Now</a>
+                </div>
+                
+                <!-- Tab Content: QR Scan -->
+                <div id="tab-content-qr" style="width: 100%; display: none; margin-bottom: 1.25rem;">
+                    <div id="qrcode-container" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                        <div id="qrcode"></div>
+                        <div class="qr-instruction">Scan with any UPI app</div>
+                    </div>
                 </div>
                 
                 <div class="action-buttons">

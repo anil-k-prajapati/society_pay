@@ -22,7 +22,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const paymentSection = document.getElementById('payment-section');
     const payBtn = document.getElementById('pay-btn');
     const qrcodeContainer = document.getElementById('qrcode-container');
-    const toggleQrBtn = document.getElementById('toggle-qr-btn');
+    const tabPay = document.getElementById('tab-pay');
+    const tabQr = document.getElementById('tab-qr');
+    const tabContentPay = document.getElementById('tab-content-pay');
+    const tabContentQr = document.getElementById('tab-content-qr');
 
     // Initialize display metadata
     societyNameDisplay.innerHTML = `${CONFIG.society_name} <span style="font-size: 1.15rem;">🏢</span>`;
@@ -95,28 +98,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Device View Tuning (Mobile vs Desktop) - Set initial QR visibility
+    // Device View Tuning (Mobile vs Desktop) - Set initial Tab
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    let qrVisible = !isMobile; // Visible by default on desktop, hidden on mobile
     
-    function setQrVisibility(visible) {
-        qrVisible = visible;
-        if (visible) {
-            qrcodeContainer.style.display = 'flex';
-            toggleQrBtn.textContent = '📷 Hide QR Code';
+    function switchTab(activeTab) {
+        if (activeTab === 'pay') {
+            tabPay.classList.add('active');
+            tabQr.classList.remove('active');
+            tabContentPay.style.display = 'block';
+            tabContentQr.style.display = 'none';
         } else {
-            qrcodeContainer.style.display = 'none';
-            toggleQrBtn.textContent = '📷 Show QR Code';
+            tabQr.classList.add('active');
+            tabPay.classList.remove('active');
+            tabContentPay.style.display = 'none';
+            tabContentQr.style.display = 'block';
         }
     }
     
-    // Set initial state
-    setQrVisibility(qrVisible);
+    // Set initial state: direct pay default on mobile, QR default on desktop
+    switchTab(isMobile ? 'pay' : 'qr');
 
-    // Toggle listener
-    toggleQrBtn.addEventListener('click', () => {
-        setQrVisibility(!qrVisible);
-    });
+    // Tab Listeners
+    tabPay.addEventListener('click', () => switchTab('pay'));
+    tabQr.addEventListener('click', () => switchTab('qr'));
 
     // Core Logic
     function getTransactionNote() {
