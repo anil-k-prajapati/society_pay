@@ -63,7 +63,7 @@
 
                 <!-- Tab Content: Pay Direct -->
                 <div id="tab-content-pay" style="width: 100%;">
-                    <a href="#" id="pay-btn" class="btn btn-pay disabled" style="width: 100%;">Pay Now</a>
+                    <button type="button" id="pay-btn" class="btn btn-pay disabled" style="width: 100%;">Pay Now</button>
                 </div>
                 
                 <!-- Tab Content: QR Scan -->
@@ -90,10 +90,40 @@
         </div>
     </footer>
 
+    <!-- Payment Confirmation Modal -->
+    <div id="confirm-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 1.25rem;">Confirm Payment</h2>
+            <p style="font-size: 0.8rem; color: hsl(240 3.8% 46.1%); margin-bottom: 1.25rem;">Please verify your details before proceeding. Payments cannot be reversed once authorized.</p>
+            <div class="confirm-summary">
+                <div class="confirm-row">
+                    <span class="confirm-label">Flat</span>
+                    <span class="confirm-value" id="confirm-flat">—</span>
+                </div>
+                <div class="confirm-row">
+                    <span class="confirm-label">Period</span>
+                    <span class="confirm-value" id="confirm-period">—</span>
+                </div>
+                <div class="confirm-row">
+                    <span class="confirm-label">Amount</span>
+                    <span class="confirm-value confirm-amount" id="confirm-amount">—</span>
+                </div>
+                <div class="confirm-row">
+                    <span class="confirm-label">Payee</span>
+                    <span class="confirm-value" id="confirm-payee">—</span>
+                </div>
+            </div>
+            <div class="modal-actions" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; width: 100%;">
+                <button id="confirm-proceed-btn" type="button" class="btn btn-pay" style="margin-bottom: 0;">Confirm &amp; Pay</button>
+                <button id="confirm-cancel-btn" type="button" class="btn btn-secondary">Go Back &amp; Edit</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Congratulations Modal -->
     <div id="success-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
-            <div class="success-icon" style="color: #10b981; font-weight: bold;">✓</div>
+            <div class="success-icon" style="color: #10b981; font-weight: bold;">&#10003;</div>
             <h2>Payment Initiated</h2>
             <p id="success-modal-text">Thank you for initiating your maintenance payment. Please ensure you have authorized the transaction in your UPI app.</p>
             <div class="modal-actions" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; width: 100%;">

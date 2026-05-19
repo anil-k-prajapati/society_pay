@@ -189,14 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const tn = getTransactionNote();
         
         if (tn) {
-            const upiLink = getUpiLink(tn);
-            payBtn.href = upiLink;
             payBtn.classList.remove('disabled');
-            generateQR(upiLink);
+            generateQR(getUpiLink(tn));
             paymentSection.classList.add('active');
         } else {
             paymentSection.classList.remove('active');
-            payBtn.removeAttribute('href');
             payBtn.classList.add('disabled');
         }
     }
@@ -211,21 +208,49 @@ document.addEventListener('DOMContentLoaded', () => {
     monthSelect.addEventListener('change', updateUI);
     yearSelect.addEventListener('change', updateUI);
 
-    // Save payment context to sessionStorage when Pay Now is tapped
-    // sessionStorage is cleared automatically when the browser session ends,
-    // which is safer than localStorage for transient payment state.
+    // Pay Now opens a confirmation review modal instead of going straight to UPI.
+    // User must explicitly confirm their flat, period, and amount before proceeding.
     payBtn.addEventListener('click', () => {
+        if (payBtn.classList.contains('disabled')) return;
+        
         const flat = flatSelect.value;
         const monthName = monthSelect.options[monthSelect.selectedIndex].text;
         const year = yearSelect.value;
-        if (flat && monthName && year) {
+        const floor = floorSelect.options[floorSelect.selectedIndex].text;
+        
+        if (!flat || !monthName || !year) return;
+        
+        // Populate confirmation summary
+        document.getElementById('confirm-flat').textContent = `${floor} — Flat ${flat}`;
+        document.getElementById('confirm-period').textContent = `${monthName} ${year}`;
+        document.getElementById('confirm-amount').textContent = `${CONFIG.currency}${Number(CONFIG.maintenance_amount).toLocaleString('en-IN')}`;
+        document.getElementById('confirm-payee').textContent = CONFIG.society_name;
+        
+        // Show the confirmation modal
+        const confirmModal = document.getElementById('confirm-modal');
+        confirmModal.style.display = 'flex';
+        
+        // Go Back — just close, user can correct their selection
+        document.getElementById('confirm-cancel-btn').onclick = () => {
+            confirmModal.style.display = 'none';
+        };
+        
+        // Confirm & Pay — save state and open UPI deep link
+        document.getElementById('confirm-proceed-btn').onclick = () => {
+            confirmModal.style.display = 'none';
+            
+            // Save to sessionStorage for success modal after returning from UPI app
             sessionStorage.setItem('payment_pending', JSON.stringify({
                 flat: flat,
                 month: monthName,
                 year: year,
-                ts: Date.now()  // timestamp to expire stale state
+                ts: Date.now()
             }));
-        }
+            
+            // Navigate to UPI deep link
+            const tn = getTransactionNote();
+            window.location.href = getUpiLink(tn);
+        };
     });
 
     // NPCI-safe fallback: detect return from UPI app via visibilitychange.

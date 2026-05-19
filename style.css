@@ -406,3 +406,44 @@ select:disabled {
     color: hsl(var(--muted-foreground));
     line-height: 1.5;
 }
+
+/* Confirmation summary table */
+.confirm-summary {
+    width: 100%;
+    border: 1px solid hsl(var(--border));
+    border-radius: calc(var(--radius) - 2px);
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+}
+
+.confirm-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.65rem 1rem;
+    border-bottom: 1px solid hsl(var(--border));
+    font-size: 0.875rem;
+}
+
+.confirm-row:last-child {
+    border-bottom: none;
+}
+
+.confirm-label {
+    color: hsl(var(--muted-foreground));
+    font-weight: 500;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.confirm-value {
+    font-weight: 600;
+    color: hsl(var(--foreground));
+}
+
+.confirm-amount {
+    font-size: 1.05rem;
+    color: hsl(142.1 76.2% 32%);
+    font-weight: 700;
+}
