@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const tnDisplay = document.getElementById('tn-display');
     const payBtn = document.getElementById('pay-btn');
     const qrcodeContainer = document.getElementById('qrcode-container');
-    const payBtnContainer = document.getElementById('pay-btn-container');
+    const toggleQrBtn = document.getElementById('toggle-qr-btn');
 
     // Initialize display metadata
     societyNameDisplay.innerHTML = `${CONFIG.society_name} <span style="font-size: 1.15rem;">🏢</span>`;
@@ -96,15 +96,28 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Device View Tuning (Mobile vs Desktop)
+    // Device View Tuning (Mobile vs Desktop) - Set initial QR visibility
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobile) {
-        qrcodeContainer.style.display = 'none';
-        payBtnContainer.style.display = 'block';
-    } else {
-        qrcodeContainer.style.display = 'flex';
-        payBtnContainer.style.display = 'none';
+    let qrVisible = !isMobile; // Visible by default on desktop, hidden on mobile
+    
+    function setQrVisibility(visible) {
+        qrVisible = visible;
+        if (visible) {
+            qrcodeContainer.style.display = 'flex';
+            toggleQrBtn.textContent = '📷 Hide QR Code';
+        } else {
+            qrcodeContainer.style.display = 'none';
+            toggleQrBtn.textContent = '📷 Show QR Code';
+        }
     }
+    
+    // Set initial state
+    setQrVisibility(qrVisible);
+
+    // Toggle listener
+    toggleQrBtn.addEventListener('click', () => {
+        setQrVisibility(!qrVisible);
+    });
 
     // Core Logic
     function getTransactionNote() {

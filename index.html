@@ -56,14 +56,14 @@
                 </div>
 
                 <div class="transaction-note" id="tn-display"></div>
+
+                <a href="#" id="pay-btn" class="btn btn-pay disabled" style="width: 100%;">Pay Now</a>
                 
-                <div id="qrcode-container">
+                <button id="toggle-qr-btn" type="button" class="btn btn-secondary" style="height: 48px; margin-bottom: 1.25rem; border-style: dashed; width: 100%;">📷 Show QR Code</button>
+
+                <div id="qrcode-container" style="width: 100%; display: none; margin-bottom: 1.25rem;">
                     <div id="qrcode"></div>
                     <div class="qr-instruction">Scan with any UPI app</div>
-                </div>
-                
-                <div id="pay-btn-container" style="width: 100%; display: none;">
-                    <a href="#" id="pay-btn" class="btn btn-pay disabled">Pay Now</a>
                 </div>
                 
                 <div class="action-buttons">
