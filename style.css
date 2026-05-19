@@ -1,0 +1,303 @@
+:root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 142.1 76.2% 36.3%; /* Shadcn Green */
+    --accent-foreground: 355.7 100% 97.3%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 5.9% 10%;
+    --radius: 0.75rem;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    background-color: hsl(240 10% 98%);
+    color: hsl(var(--foreground));
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 3rem 1rem;
+    align-items: center;
+}
+
+main {
+    width: 100%;
+    max-width: 440px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-grow: 1;
+}
+
+/* Header styled with subtle modern typography */
+.header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    width: 100%;
+}
+
+.header h1 {
+    color: hsl(var(--primary));
+    font-size: 1.625rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    line-height: 1.25;
+}
+
+/* Shadcn Card component replica */
+.card {
+    background-color: hsl(var(--card));
+    color: hsl(var(--card-foreground));
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    padding: 2.25rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Steps list */
+.step-group {
+    margin-bottom: 1.5rem;
+}
+
+.step-group label {
+    display: flex;
+    align-items: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: hsl(var(--foreground));
+    margin-bottom: 0.625rem;
+}
+
+/* Dynamic steps count icon styling */
+.step-badge {
+    background-color: hsl(var(--primary));
+    color: hsl(var(--primary-foreground));
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    margin-right: 0.6rem;
+}
+
+.form-row {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Shadcn Input / Select Selectors */
+select {
+    width: 100%;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid hsl(var(--input));
+    border-radius: calc(var(--radius) - 2px);
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: hsl(var(--card));
+    color: hsl(var(--foreground));
+    outline: none;
+    transition: all 0.15s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2371717a%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.875rem top 50%;
+    background-size: 0.6rem auto;
+    cursor: pointer;
+}
+
+select:focus, select:focus-visible {
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 2px hsl(var(--background)), 0 0 0 4px hsl(var(--ring) / 0.1);
+}
+
+select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Shadcn Alert/Info container for price */
+.amount-display {
+    background-color: hsl(var(--muted));
+    border: 1px solid hsl(var(--border));
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.amount-display .label {
+    font-size: 0.875rem;
+    color: hsl(var(--muted-foreground));
+    font-weight: 500;
+}
+
+.amount-display .value {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: hsl(var(--foreground));
+    letter-spacing: -0.01em;
+}
+
+/* Smooth expansion animation for payment block */
+.payment-section {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease, margin-top 0.3s ease, padding-top 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.payment-section.active {
+    opacity: 1;
+    max-height: 1000px;
+    margin-top: 1.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid hsl(var(--border));
+}
+
+/* Monospace note label */
+.transaction-note {
+    width: 100%;
+    font-size: 0.775rem;
+    color: hsl(var(--muted-foreground));
+    text-align: center;
+    margin-bottom: 1.5rem;
+    background-color: hsl(var(--muted));
+    padding: 0.75rem;
+    border-radius: calc(var(--radius) - 4px);
+    border: 1px dashed hsl(var(--border));
+    word-break: break-all;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+#qrcode-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+#qrcode {
+    background: white;
+    padding: 12px;
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+    margin-bottom: 0.875rem;
+    min-width: 274px;
+    min-height: 274px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.qr-instruction {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: hsl(var(--muted-foreground));
+    text-align: center;
+}
+
+/* Buttons styling adhering to shadcn UI components */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.btn:active:not(.disabled) {
+    transform: scale(0.98);
+}
+
+.btn-pay {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--accent-foreground));
+    height: 48px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: var(--radius);
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 10px -2px rgba(16, 185, 129, 0.2);
+}
+
+.btn-pay:hover:not(.disabled) {
+    background-color: #059669;
+    box-shadow: 0 4px 12px -1px rgba(5, 150, 105, 0.35);
+}
+
+.btn-pay.disabled {
+    background-color: hsl(var(--muted));
+    color: hsl(var(--muted-foreground));
+    box-shadow: none;
+    cursor: not-allowed;
+    pointer-events: none;
+    border: 1px solid hsl(var(--border));
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    width: 100%;
+}
+
+.btn-secondary {
+    background-color: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+    height: 40px;
+    border-radius: calc(var(--radius) - 2px);
+    border: 1px solid hsl(var(--border));
+}
+
+.btn-secondary:hover {
+    background-color: #e4e4e7;
+    color: hsl(var(--foreground));
+}
+
+.footer {
+    text-align: center;
+    font-size: 0.775rem;
+    color: hsl(var(--muted-foreground));
+    margin-top: 1.5rem;
+}
