@@ -156,7 +156,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const cu = CONFIG.currency;
         const encodedTn = encodeURIComponent(tn);
         
-        return `upi://pay?pa=${pa}&pn=${pn}&am=${am}&tn=${encodedTn}&cu=${cu}`;
+        // Return URL for fallback redirect back to the page
+        const ru = encodeURIComponent(window.location.origin + window.location.pathname + '?status=success');
+        
+        return `upi://pay?pa=${pa}&pn=${pn}&am=${am}&tn=${encodedTn}&cu=${cu}&ru=${ru}`;
     }
 
     let qrCodeObj = null;
@@ -209,6 +212,20 @@ document.addEventListener('DOMContentLoaded', () => {
     monthSelect.addEventListener('change', updateUI);
     yearSelect.addEventListener('change', updateUI);
 
+    // Save payment details to localStorage when payBtn is clicked
+    payBtn.addEventListener('click', () => {
+        const flat = flatSelect.value;
+        const monthName = monthSelect.options[monthSelect.selectedIndex].text;
+        const year = yearSelect.value;
+        if (flat && monthName && year) {
+            localStorage.setItem('last_payment', JSON.stringify({
+                flat: flat,
+                month: monthName,
+                year: year
+            }));
+        }
+    });
+
     document.getElementById('copy-btn').addEventListener('click', () => {
         const tn = getTransactionNote();
         if (!tn) return;
@@ -235,6 +252,44 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
         window.open(url, '_blank');
     });
+
+    // Check for success status in URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('status') === 'success') {
+        const modal = document.getElementById('success-modal');
+        const modalText = document.getElementById('success-modal-text');
+        const modalWaBtn = document.getElementById('modal-wa-btn');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        
+        const lastPayment = JSON.parse(localStorage.getItem('last_payment'));
+        
+        if (lastPayment) {
+            modalText.textContent = `Thank you for initiating your maintenance payment of ${CONFIG.currency} ${CONFIG.maintenance_amount} for Flat ${lastPayment.flat} (${lastPayment.month} ${lastPayment.year}). Please ensure you confirm the transfer inside your UPI app.`;
+            
+            modalWaBtn.onclick = () => {
+                const text = `I have paid maintenance for Flat ${lastPayment.flat} - ${lastPayment.month} ${lastPayment.year}. Please find the payment details: [UPI Ref will show in your bank statement]`;
+                const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
+                window.open(url, '_blank');
+            };
+        } else {
+            modalWaBtn.style.display = 'none';
+        }
+        
+        // Show modal
+        modal.style.display = 'flex';
+        
+        // Close modal hook
+        modalCloseBtn.onclick = () => {
+            modal.style.display = 'none';
+        };
+        
+        // Clean URL to prevent showing modal again on manual refresh
+        const newUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+        
+        // Clean temporary storage
+        localStorage.removeItem('last_payment');
+    }
 
     // Start with flats disabled until floor is selected
     flatSelect.disabled = true;

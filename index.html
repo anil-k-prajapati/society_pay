@@ -90,6 +90,19 @@
         </div>
     </footer>
 
+    <!-- Congratulations Modal -->
+    <div id="success-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="success-icon">🎉</div>
+            <h2>Payment Initiated!</h2>
+            <p id="success-modal-text">Thank you for initiating your maintenance payment. Please ensure you have authorized the transaction in your UPI app.</p>
+            <div class="modal-actions" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem; width: 100%;">
+                <button id="modal-wa-btn" type="button" class="btn btn-pay" style="margin-bottom: 0; background-color: #25D366; box-shadow: 0 4px 10px rgba(37, 211, 102, 0.2);">💬 Share on WhatsApp</button>
+                <button id="modal-close-btn" type="button" class="btn btn-secondary">Dismiss</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Reference separated application logic -->
     <script defer src="app.js"></script>
 </body>
