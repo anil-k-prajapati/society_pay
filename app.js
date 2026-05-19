@@ -132,20 +132,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!flat || !month || !year) return "";
         
-        // Build clean alphanumeric note (NPCI recommended)
-        let tn = `Flat ${flat} ${month} ${year} Maintenance`;
+        // Convert 4-digit year (e.g. 2026) to 2-digit (e.g. 26)
+        const shortYear = year.toString().slice(-2);
         
-        // Progressive shortening to stay within 50-char limit
-        if (tn.length > 50) {
-            tn = `Flat ${flat} ${month} ${year} Maint`;
-        }
-        if (tn.length > 50) {
-            tn = `Fl ${flat} ${month} ${year} Maint`;
-        }
-        if (tn.length > 50) {
-            const maxFlatLen = 50 - `Fl  ${month} ${year} Maint`.length;
-            tn = `Fl ${flat.substring(0, maxFlatLen)} ${month} ${year} Maint`;
-        }
+        // Short form format: F101 May 26 Mnt
+        let tn = `F${flat} ${month} ${shortYear} Mnt`;
         
         // Final safety: strip any remaining non-alphanumeric chars except spaces
         tn = tn.replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 50).trim();
