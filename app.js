@@ -220,8 +220,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!flat || !monthName || !year) return;
         
-        // Populate confirmation summary
-        document.getElementById('confirm-flat').textContent = `${floor} — Flat ${flat}`;
+        // Populate confirmation summary — flat number gets attention animation
+        document.getElementById('confirm-flat').innerHTML =
+            `<span class="confirm-flat-highlight">${floor} &mdash; Flat ${flat}</span>`;
         document.getElementById('confirm-period').textContent = `${monthName} ${year}`;
         document.getElementById('confirm-amount').textContent = `${CONFIG.currency}${Number(CONFIG.maintenance_amount).toLocaleString('en-IN')}`;
         document.getElementById('confirm-payee').textContent = CONFIG.society_name;

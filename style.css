@@ -447,3 +447,20 @@ select:disabled {
     color: hsl(142.1 76.2% 32%);
     font-weight: 700;
 }
+
+/* Flat number attention highlight — red bold pulse */
+@keyframes flatPulse {
+    0%   { color: #dc2626; transform: scale(1);    text-shadow: none; }
+    40%  { color: #ef4444; transform: scale(1.08); text-shadow: 0 0 8px rgba(239,68,68,0.5); }
+    60%  { color: #b91c1c; transform: scale(1.04); text-shadow: 0 0 4px rgba(239,68,68,0.3); }
+    100% { color: #dc2626; transform: scale(1);    text-shadow: none; }
+}
+
+.confirm-flat-highlight {
+    color: #dc2626;
+    font-weight: 800;
+    font-size: 1rem;
+    display: inline-block;
+    animation: flatPulse 1.4s ease-in-out infinite;
+    letter-spacing: 0.01em;
+}
