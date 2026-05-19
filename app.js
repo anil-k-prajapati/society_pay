@@ -5,7 +5,7 @@ const CONFIG = {
     society_name: "Terra Gold - Belmac Riverside",
     upi_id: "anil.personal.me-1@okicici",
     maintenance_amount: 1,
-    currency: "INR"
+    currency: "₹"
 };
 // ==========================================
 // END CONFIGURATION BLOCK
@@ -28,8 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabContentQr = document.getElementById('tab-content-qr');
 
     // Initialize display metadata
-    societyNameDisplay.innerHTML = `${CONFIG.society_name} <span style="font-size: 1.15rem;">🏢</span>`;
-    amountDisplay.textContent = `${CONFIG.currency} ${Number(CONFIG.maintenance_amount).toLocaleString('en-IN')}`;
+    societyNameDisplay.textContent = CONFIG.society_name;
+    amountDisplay.textContent = `${CONFIG.currency}${Number(CONFIG.maintenance_amount).toLocaleString('en-IN')}`;
 
     // Populate Floor (1 to 6)
     for (let f = 1; f <= 6; f++) {
@@ -263,7 +263,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalText.textContent = `Thank you for initiating your maintenance payment of ₹${Number(CONFIG.maintenance_amount).toLocaleString('en-IN')} for Flat ${payment.flat} (${payment.month} ${payment.year}). Please verify the transaction was authorized in your UPI app.`;
         
         modalWaBtn.onclick = () => {
-            const text = `Maintenance payment initiated for Flat ${payment.flat} ${payment.month} ${payment.year}. Amount: Rs ${CONFIG.maintenance_amount}. Ref will appear on bank statement.`;
+            const text = `Maintenance payment initiated for Flat ${payment.flat} ${payment.month} ${payment.year}. Amount: ₹${CONFIG.maintenance_amount}. Ref will appear on bank statement.`;
             window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
         };
         
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
         navigator.clipboard.writeText(link).then(() => {
             const btn = document.getElementById('copy-btn');
             const originalHTML = btn.innerHTML;
-            btn.innerHTML = "✅ Copied";
+            btn.innerHTML = "Copied";
             setTimeout(() => { btn.innerHTML = originalHTML; }, 2000);
         }).catch(() => {
             alert("Could not copy link automatically.");
@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!flat) return;
         
-        const text = `Maintenance payment initiated for Flat ${flat} ${monthName} ${year}. Amount: Rs ${CONFIG.maintenance_amount}. Ref will appear on bank statement.`;
+        const text = `Maintenance payment initiated for Flat ${flat} ${monthName} ${year}. Amount: ₹${CONFIG.maintenance_amount}. Ref will appear on bank statement.`;
         window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     });
 
