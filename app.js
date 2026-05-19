@@ -4,7 +4,7 @@
 const CONFIG = {
     society_name: "Terra Gold - Belmac Riverside",
     upi_id: "anil.personal.me-1@okicici",
-    maintenance_amount: 2500,
+    maintenance_amount: 1,
     currency: "INR"
 };
 // ==========================================
