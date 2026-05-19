@@ -20,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const monthSelect = document.getElementById('month');
     const yearSelect = document.getElementById('year');
     const paymentSection = document.getElementById('payment-section');
-    const tnDisplay = document.getElementById('tn-display');
     const payBtn = document.getElementById('pay-btn');
     const qrcodeContainer = document.getElementById('qrcode-container');
     const toggleQrBtn = document.getElementById('toggle-qr-btn');
@@ -128,9 +127,21 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!flat || !month || !year) return "";
         
         let tn = `Flat-${flat}-${month}-${year}-Maintenance`;
+        
+        // Progressive shortening algorithm to fit 50-character limit
         if (tn.length > 50) {
-            tn = tn.substring(0, 50);
+            tn = `Flat-${flat}-${month}-${year}-Maint`;
         }
+        if (tn.length > 50) {
+            tn = `Fl-${flat}-${month}-${year}-Maint`;
+        }
+        if (tn.length > 50) {
+            // Hard limit: truncate flat identifier if abnormally long
+            const maxFlatLength = 50 - `Fl--${month}-${year}-Maint`.length;
+            const truncatedFlat = flat.substring(0, maxFlatLength);
+            tn = `Fl-${truncatedFlat}-${month}-${year}-Maint`;
+        }
+        
         return tn;
     }
 
@@ -173,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (tn) {
             const upiLink = getUpiLink(tn);
-            tnDisplay.textContent = `Txn Note: ${tn}`;
             payBtn.href = upiLink;
             payBtn.classList.remove('disabled');
             generateQR(upiLink);
