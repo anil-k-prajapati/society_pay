@@ -123,6 +123,8 @@ document.addEventListener('DOMContentLoaded', () => {
     tabQr.addEventListener('click', () => switchTab('qr'));
 
     // Core Logic
+    // NPCI Compliance: transaction note must be alphanumeric + spaces only,
+    // max 50 characters. Hyphens & special chars can cause PSP rejection.
     function getTransactionNote() {
         const flat = flatSelect.value;
         const month = monthSelect.value;
@@ -130,36 +132,42 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!flat || !month || !year) return "";
         
-        let tn = `Flat-${flat}-${month}-${year}-Maintenance`;
+        // Build clean alphanumeric note (NPCI recommended)
+        let tn = `Flat ${flat} ${month} ${year} Maintenance`;
         
-        // Progressive shortening algorithm to fit 50-character limit
+        // Progressive shortening to stay within 50-char limit
         if (tn.length > 50) {
-            tn = `Flat-${flat}-${month}-${year}-Maint`;
+            tn = `Flat ${flat} ${month} ${year} Maint`;
         }
         if (tn.length > 50) {
-            tn = `Fl-${flat}-${month}-${year}-Maint`;
+            tn = `Fl ${flat} ${month} ${year} Maint`;
         }
         if (tn.length > 50) {
-            // Hard limit: truncate flat identifier if abnormally long
-            const maxFlatLength = 50 - `Fl--${month}-${year}-Maint`.length;
-            const truncatedFlat = flat.substring(0, maxFlatLength);
-            tn = `Fl-${truncatedFlat}-${month}-${year}-Maint`;
+            const maxFlatLen = 50 - `Fl  ${month} ${year} Maint`.length;
+            tn = `Fl ${flat.substring(0, maxFlatLen)} ${month} ${year} Maint`;
         }
+        
+        // Final safety: strip any remaining non-alphanumeric chars except spaces
+        tn = tn.replace(/[^a-zA-Z0-9 ]/g, '').substring(0, 50).trim();
         
         return tn;
     }
 
     function getUpiLink(tn) {
         const pa = CONFIG.upi_id;
+        // NPCI: payee name must be properly URI-encoded
         const pn = encodeURIComponent(CONFIG.society_name);
-        const am = CONFIG.maintenance_amount;
+        // NPCI: amount must be a decimal string (e.g. "1.00"), not an integer
+        const am = Number(CONFIG.maintenance_amount).toFixed(2);
         const cu = CONFIG.currency;
         const encodedTn = encodeURIComponent(tn);
         
-        // Return URL for fallback redirect back to the page
-        const ru = encodeURIComponent(window.location.origin + window.location.pathname + '?status=success');
-        
-        return `upi://pay?pa=${pa}&pn=${pn}&am=${am}&tn=${encodedTn}&cu=${cu}&ru=${ru}`;
+        // NPCI / Security Note: The `ru` (Return URL) parameter is intentionally
+        // OMITTED. NPCI's 2024-2025 security framework flags third-party `ru`
+        // redirects as a phishing vector. PSP apps (GPay, PhonePe, BHIM etc.)
+        // block or silently drop deep links containing unverified `ru` domains.
+        // Fallback detection is handled via the browser's visibilitychange event.
+        return `upi://pay?pa=${pa}&pn=${pn}&am=${am}&tn=${encodedTn}&cu=${cu}`;
     }
 
     let qrCodeObj = null;
@@ -212,19 +220,68 @@ document.addEventListener('DOMContentLoaded', () => {
     monthSelect.addEventListener('change', updateUI);
     yearSelect.addEventListener('change', updateUI);
 
-    // Save payment details to localStorage when payBtn is clicked
+    // Save payment context to sessionStorage when Pay Now is tapped
+    // sessionStorage is cleared automatically when the browser session ends,
+    // which is safer than localStorage for transient payment state.
     payBtn.addEventListener('click', () => {
         const flat = flatSelect.value;
         const monthName = monthSelect.options[monthSelect.selectedIndex].text;
         const year = yearSelect.value;
         if (flat && monthName && year) {
-            localStorage.setItem('last_payment', JSON.stringify({
+            sessionStorage.setItem('payment_pending', JSON.stringify({
                 flat: flat,
                 month: monthName,
-                year: year
+                year: year,
+                ts: Date.now()  // timestamp to expire stale state
             }));
         }
     });
+
+    // NPCI-safe fallback: detect return from UPI app via visibilitychange.
+    // When the user switches to the UPI app and comes back to the browser,
+    // the page becomes visible again. We check for a pending payment state
+    // and show the congratulations modal — no `ru` redirect required.
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState !== 'visible') return;
+        
+        const raw = sessionStorage.getItem('payment_pending');
+        if (!raw) return;
+        
+        let pending;
+        try { pending = JSON.parse(raw); } catch(e) { return; }
+        
+        // Only act if the pending state is fresh (within 10 minutes)
+        const AGE_LIMIT_MS = 10 * 60 * 1000;
+        if (!pending.ts || (Date.now() - pending.ts) > AGE_LIMIT_MS) {
+            sessionStorage.removeItem('payment_pending');
+            return;
+        }
+        
+        // Clear immediately so repeat tab-switches don't re-trigger
+        sessionStorage.removeItem('payment_pending');
+        
+        showSuccessModal(pending);
+    });
+
+    function showSuccessModal(payment) {
+        const modal = document.getElementById('success-modal');
+        const modalText = document.getElementById('success-modal-text');
+        const modalWaBtn = document.getElementById('modal-wa-btn');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        
+        modalText.textContent = `Thank you for initiating your maintenance payment of ₹${Number(CONFIG.maintenance_amount).toLocaleString('en-IN')} for Flat ${payment.flat} (${payment.month} ${payment.year}). Please verify the transaction was authorized in your UPI app.`;
+        
+        modalWaBtn.onclick = () => {
+            const text = `Maintenance payment initiated for Flat ${payment.flat} ${payment.month} ${payment.year}. Amount: Rs ${CONFIG.maintenance_amount}. Ref will appear on bank statement.`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        };
+        
+        modal.style.display = 'flex';
+        
+        modalCloseBtn.onclick = () => {
+            modal.style.display = 'none';
+        };
+    }
 
     document.getElementById('copy-btn').addEventListener('click', () => {
         const tn = getTransactionNote();
@@ -248,48 +305,9 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!flat) return;
         
-        const text = `I have paid maintenance for Flat ${flat} - ${monthName} ${year}. Please find the payment details: [UPI Ref will show in your bank statement]`;
-        const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-        window.open(url, '_blank');
+        const text = `Maintenance payment initiated for Flat ${flat} ${monthName} ${year}. Amount: Rs ${CONFIG.maintenance_amount}. Ref will appear on bank statement.`;
+        window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
     });
-
-    // Check for success status in URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('status') === 'success') {
-        const modal = document.getElementById('success-modal');
-        const modalText = document.getElementById('success-modal-text');
-        const modalWaBtn = document.getElementById('modal-wa-btn');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-        
-        const lastPayment = JSON.parse(localStorage.getItem('last_payment'));
-        
-        if (lastPayment) {
-            modalText.textContent = `Thank you for initiating your maintenance payment of ${CONFIG.currency} ${CONFIG.maintenance_amount} for Flat ${lastPayment.flat} (${lastPayment.month} ${lastPayment.year}). Please ensure you confirm the transfer inside your UPI app.`;
-            
-            modalWaBtn.onclick = () => {
-                const text = `I have paid maintenance for Flat ${lastPayment.flat} - ${lastPayment.month} ${lastPayment.year}. Please find the payment details: [UPI Ref will show in your bank statement]`;
-                const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-                window.open(url, '_blank');
-            };
-        } else {
-            modalWaBtn.style.display = 'none';
-        }
-        
-        // Show modal
-        modal.style.display = 'flex';
-        
-        // Close modal hook
-        modalCloseBtn.onclick = () => {
-            modal.style.display = 'none';
-        };
-        
-        // Clean URL to prevent showing modal again on manual refresh
-        const newUrl = window.location.origin + window.location.pathname;
-        window.history.replaceState({}, document.title, newUrl);
-        
-        // Clean temporary storage
-        localStorage.removeItem('last_payment');
-    }
 
     // Start with flats disabled until floor is selected
     flatSelect.disabled = true;
